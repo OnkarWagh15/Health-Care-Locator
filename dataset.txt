@@ -1,0 +1,9 @@
+8
+Shivajinagar Hardikar_Hospital Anatomical_Pathology 4-5
+Shivajinagar Hardikar_Hospital Cardiology 3-6
+Shivajinagar Hardikar_Hospital Dermatology 6-8
+Shivajinagar Hardikar_Hospital Thoracic_Surgery 2-4
+Shivajinagar Hardikar_Hospital Emergency 10-11
+Shivajinagar Hardikar_Hospital Emergency_Medicine 10-12
+Hadapsar Hardikar_Hospital Emergency_Medicine 10-12
+Deccan Hardikar_Hospital Emergency_Medicine 10-12
