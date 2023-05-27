@@ -1,13 +1,17 @@
+typedef struct specialization{
+    char *specialist;
+    char *time;
+}specialization;
 typedef struct graph{
     int hospitalId;
     char *hospitalName;
     char *hospitalAddress;
-    char *specialization;
-    char *time;
+    specialization **record;
 }Graph;
 typedef struct graphPaths{
     int **paths;
     int size;
 }GraphPaths;
-void init(Graph *g,GraphPaths *gp);
+Graph** init(Graph *g, GraphPaths *gp, Graph **collectionOfNodes);
 void bfsTravsersal(GraphPaths gp,int start_vertex);
+void HealthCareLocator(GraphPaths *gp,Graph *g,Graph **collectionOfNodes);

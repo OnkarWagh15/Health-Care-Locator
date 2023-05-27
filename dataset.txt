@@ -5,5 +5,5 @@ Shivajinagar Hardikar_Hospital Dermatology 6-8
 Shivajinagar Hardikar_Hospital Thoracic_Surgery 2-4
 Shivajinagar Hardikar_Hospital Emergency 10-11
 Shivajinagar Hardikar_Hospital Emergency_Medicine 10-12
-Hadapsar Hardikar_Hospital Emergency_Medicine 10-12
-Deccan Hardikar_Hospital Emergency_Medicine 10-12
+Hadapsar hello Emergency_Medicine 10-12
+Deccan hi Emergency_Medicine 10-12
