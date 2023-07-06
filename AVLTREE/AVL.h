@@ -1,12 +1,3 @@
-typedef struct node{
-    struct node* parent;
-    struct node* lchild;
-    struct node* rchild;
-    int bf;
-    char *key;
-    int index;
-}node;
-typedef node* AVL;
 
 void initTree(AVL *t);
 void insert(AVL *t,char *key,int index);

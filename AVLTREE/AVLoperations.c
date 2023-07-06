@@ -16,10 +16,8 @@ void inorder(AVL t)
     if(!t)
     return;
     inorder(t->lchild);
-    printf("\n%s\t%d",t->key,t->index);
-    // if(t->parent)
-    //     printf("\t%s",t->parent->key);
-    inorder(t->rchild);
+    printf("%s\t",t->key);
+      inorder(t->rchild);
 }
 int max(int a,int b)
 {
@@ -28,13 +26,14 @@ int max(int a,int b)
     else
         return b;
 }
-int  height(AVL t)
+int height(AVL t)
 {
     if(!t)
         return -1;
+    if(!(t->lchild && t->rchild))
+        return 0;
     
     return 1+max(height(t->lchild),height(t->rchild));
-
 }
 void insert(AVL (*t),char *key,int index)
 {
@@ -383,7 +382,10 @@ struct node* delete(AVL *t, char *key){
 
 int search(AVL t,char *key)
 {
-    if(!t)  return INT_MIN;
+    if(!t){
+        printf("\nTree not found\n");
+        return INT_MIN;
+    }  
     while(t)
     {
         if(strcmp(key,t->key)==0)
@@ -396,5 +398,5 @@ int search(AVL t,char *key)
             t = t->rchild;
         }
     }
-    return INT_MIN;
+    return -1;
 }

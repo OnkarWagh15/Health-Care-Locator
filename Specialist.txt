@@ -1,0 +1,25 @@
+Cardiologist           - Specializes in diagnosing and treating diseases and conditions related to the heart and cardiovascular system.
+Dermatologist          - Deals with the diagnosis and treatment of skin disorders, diseases, and conditions.
+Gastroenterologist     - Focuses on disorders and diseases of the digestive system, including the stomach, intestines, liver, and pancreas.
+Gynecologist           - Specializes in women's reproductive health, including the diagnosis and treatment of conditions related to female reproductive system.
+Orthopedic             - Deals with the diagnosis and treatment of musculoskeletal conditions, injuries, and disorders involving bones, muscles, and tendons.
+Neurologist            - Specializes in disorders of the nervous system, including the brain, spinal cord, and nerves.
+Psychiatrist           - Focuses on the diagnosis, treatment, and management of mental health disorders.
+Pediatrician           - Specializes in the medical care of infants, children, and adolescents.
+Ophthalmologist        - Deals with the diagnosis and treatment of eye disorders and diseases, including vision problems and eye injuries.
+Anesthesiologist       - Administers anesthesia and monitors patients' vital signs during surgical procedures or medical treatments.
+Otolaryngologist       - Also known as an ear, nose, and throat (ENT) specialist, diagnoses and treats disorders related to ENT and related structures.
+Urologist              - Focuses on the diagnosis and treatment of urinary tract disorders in both males and females.
+Pulmonologist          - Specializes in the diagnosis and treatment of respiratory disorders, including lung diseases and conditions.
+Oncologist             - Deals with the diagnosis and treatment of cancer.
+Endocrinologist        - Focuses on disorders and conditions related to the endocrine system, which regulates hormones and metabolism.
+Radiologist            - Interprets and analyzes medical images (X-Ray, MRI, CT-Scan) to aid in the diagnosis and treatment of various conditions.
+Allergist              - Specializes in diagnosing and treating allergies and allergic reactions.
+Nephrologist           - Focuses on the diagnosis and treatment of kidney diseases and conditions.
+Optometrist            - Provides primary vision care, including eye examinations, prescribing corrective lenses, and detecting eye abnormalities.
+Anatomical Pathologist - Examines tissue samples and performs autopsies to diagnose diseases and conditions.
+Hematologist           - Specializes in the diagnosis and treatment of disorders and conditions related to blood and blood-producing organs.
+General Surgery        - Performs surgical procedures for a wide range of conditions and diseases.
+Respirologist          - Deals with the diagnosis and treatment of respiratory disorders, particularly those affecting the lungs.
+Neurosurgery           - Performs surgical procedures on the brain, spinal cord, and peripheral nerves to treat various neurological conditions.
+Dentist                - Focuses on oral health, including diagnosis, prevention, and treatment of diseases and conditions affecting the teeth, gums, and mouth.

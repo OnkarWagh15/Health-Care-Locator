@@ -1,14 +1,19 @@
+#define MAX_LINE_LENGTH 1000
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include "graph.h"
-#include "queue/queueOperations.c"
 #include "AVLTREE/AVLoperations.c"
+#include "MINHEAP/heap.c"
 
 void init(GraphPaths *gp)
 {
     FILE *path;
-    path = fopen("inputpath.txt", "r");
+    path = fopen("path.txt", "r");
     int size1;
     fscanf(path, "%d", &size1);
     (*gp).size = size1;
@@ -23,7 +28,7 @@ void init(GraphPaths *gp)
     }
 }
 
-Graph **updateNode(Graph *g, GraphPaths *gp, Graph **collectionOfNodes)
+Graph **updateNode(Graph *g, GraphPaths *gp, Graph **collectionOfNodes, AVL *t)
 {
     FILE *ptr;
     ptr = fopen("dataset.txt", "r");
@@ -32,15 +37,13 @@ Graph **updateNode(Graph *g, GraphPaths *gp, Graph **collectionOfNodes)
     int size = 0;
     fscanf(ptr, "%d", &size);
     collectionOfNodes = (Graph **)malloc(sizeof(Graph *) * size);
-    char hospiAddr[30] = "xyz";
-    char hospiName[30] = "xyz";
+    char hospiAddr[300] = "xyz";
+    char hospiName[300] = "xyz";
     int id = -1;
     int i = -1;
     int j = 0;
     int flag = 0;
-    AVL t;
     int noOfNodes = 0;
-    initTree(&t);
     while (!feof(ptr))
     {
         fscanf(ptr, "%s", hospiAddr);
@@ -49,12 +52,15 @@ Graph **updateNode(Graph *g, GraphPaths *gp, Graph **collectionOfNodes)
         if (flag == 0)
         {
             g->hospitalId = ++id;
-            g->hospitalAddress = (char *)malloc(sizeof(char) * 20);
+
+            g->hospitalAddress = (char *)malloc(sizeof(char) * 200);
             strcpy(g->hospitalAddress, hospiAddr);
-            g->hospitalName = (char *)malloc(sizeof(char) * 20);
+            g->hospitalName = (char *)malloc(sizeof(char) * 200);
             strcpy(g->hospitalName, hospiName);
             collectionOfNodes[++i] = g;
-            g->record = (specialization **)malloc(sizeof(specialization *) * 15);
+            g->record = (specialization **)malloc(sizeof(specialization *) * 150);
+            j = 0;
+
             flag = 1;
             noOfNodes++;
         }
@@ -62,14 +68,16 @@ Graph **updateNode(Graph *g, GraphPaths *gp, Graph **collectionOfNodes)
         {
             g = (Graph *)malloc(sizeof(Graph));
             (*g).hospitalId = ++id;
-            g->hospitalAddress = (char *)malloc(sizeof(char) * 20);
+            g->hospitalAddress = (char *)malloc(sizeof(char) * 200);
             strcpy(g->hospitalAddress, hospiAddr);
 
-            g->hospitalName = (char *)malloc(sizeof(char) * 20);
+            g->hospitalName = (char *)malloc(sizeof(char) * 200);
             strcpy(g->hospitalName, hospiName);
 
             collectionOfNodes[++i] = g;
-            g->record = (specialization **)malloc(sizeof(specialization *) * 15);
+            g->record = (specialization **)malloc(sizeof(specialization *) * 150);
+            j = 0;
+
             noOfNodes++;
         }
         if (strcmp(g->hospitalAddress, hospiAddr) == 0)
@@ -83,14 +91,16 @@ Graph **updateNode(Graph *g, GraphPaths *gp, Graph **collectionOfNodes)
             {
                 g = (Graph *)malloc(sizeof(Graph));
                 (*g).hospitalId = ++id;
-                g->hospitalAddress = (char *)malloc(sizeof(char) * 20);
+                g->hospitalAddress = (char *)malloc(sizeof(char) * 200);
                 strcpy(g->hospitalAddress, hospiAddr);
 
-                g->hospitalName = (char *)malloc(sizeof(char) * 20);
+                g->hospitalName = (char *)malloc(sizeof(char) * 200);
                 strcpy(g->hospitalName, hospiName);
 
                 collectionOfNodes[++i] = g;
-                g->record = (specialization **)malloc(sizeof(specialization *) * 15);
+                g->record = (specialization **)malloc(sizeof(specialization *) * 150);
+                j = 0;
+
                 noOfNodes++;
             }
         }
@@ -100,40 +110,111 @@ Graph **updateNode(Graph *g, GraphPaths *gp, Graph **collectionOfNodes)
         fscanf(ptr, "%s", g->record[j]->specialist);
         fscanf(ptr, "%s", g->record[j++]->time);
 
-        insert(&t, g->hospitalAddress, i);
+        insert(t, g->hospitalAddress, i);
     }
-    j = 0;
-    fclose(ptr);
     return collectionOfNodes;
 }
 
-void bfsTravsersal(GraphPaths gp, int start_vertex)
+char *strupr(char *str)
 {
-    int i = 0;
-    int *visitedNodes = (int *)calloc(gp.size, sizeof(int));
-    Queue q;
-    initQ(&q);
-    enqueue(&q, start_vertex);
-    visitedNodes[start_vertex] = 1;
-    while (q.rear)
+    unsigned char *p = (unsigned char *)str;
+
+    while (*p)
     {
-        for (i = 0; i < gp.size; i++)
-        {
-
-            if (gp.paths[start_vertex][i] != 0 && visitedNodes[i] == 0)
-            {
-                enqueue(&q, i);
-                visitedNodes[i] = 1;
-            }
-        }
-
-        printf("%d\t->\t", q.front->data);
-        dequeue(&q);
-        if (q.front)
-            start_vertex = q.front->data;
+        *p = toupper((unsigned char)*p);
+        p++;
     }
-    return;
+
+    return str;
 }
+
+void printSpecialist()
+{
+    FILE *file;
+    char line[MAX_LINE_LENGTH];
+
+    file = fopen("Specialist.txt", "r");
+    printf("SPECIALISTS AVAILABLE - \n");
+    if (file == NULL)
+    {
+        printf("Unable to open the file.\n");
+        return;
+    }
+
+    while (fgets(line, MAX_LINE_LENGTH, file) != NULL)
+    {
+        printf("\n%s", line);
+    }
+    printf("\n\n\n\n");
+    fclose(file);
+}
+
+void printCentered()
+{
+    struct winsize w, w1, w2;
+    const char *star1 = "*************************************";
+    const char *text = "H E A L T H C A R E  L O C A T O R";
+    const char *star2 = "*************************************";
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    int terminal_width = w.ws_col;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w1);
+    int terminal_width1 = w1.ws_col;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w2);
+    int terminal_width2 = w2.ws_col;
+
+    int text_length1 = strlen(star1);
+    int text_length = strlen(text);
+    int text_length2 = strlen(star2);
+    int padding = (terminal_width - text_length) / 2;
+    int padding1 = (terminal_width1 - text_length1) / 2;
+    int padding2 = (terminal_width2 - text_length2) / 2;
+
+    printf("\033[%dC%s\n", padding1, star1);
+    printf("\n");
+    printf("\033[%dC%s\n", padding, text);
+    printf("\n");
+    printf("\033[%dC%s\n", padding2, star2);
+    printf("\n");
+}
+
+void displayMenu()
+{
+    while (1)
+    {
+        printCentered();
+        printf("\n1. Locate a Hospital near you");
+        printf("\n2. Find your Specialist");
+        printf("\n3. Exit");
+        int choice;
+        printf("\n\nEnter your choice : ");
+        scanf("%d", &choice);
+
+        system("clear");
+        printCentered();
+        switch (choice)
+        {
+        case 1:
+            Graph g;
+            GraphPaths gp;
+            Graph **collectionOfNodes;
+            HealthCareLocator(&gp, &g, collectionOfNodes);
+
+            break;
+        case 2:
+            printSpecialist();
+            break;
+
+        case 3:
+            // system("clear");
+            printf("\nTake Care!!\n");
+            exit(0);
+        default:
+            printf("Invalid option");
+            break;
+        }
+    }
+}
+
 void print_styled_input(const char *message)
 {
     printf("\n");
@@ -143,142 +224,246 @@ void print_styled_input(const char *message)
     printf("\033[0m"); // Reset text color
     printf(": ");
 }
-void takeInputFromUser(char **area_name, char **specialist, char **time)
+
+void searchForUserChoice(AVL t, char userChoice)
 {
-    print_styled_input("Enter the area name");
-    scanf("%s", *area_name);
+    if (!t)
+    {
+        return;
+    }
 
-    print_styled_input("Enter the specialist required");
-    scanf("%s", *specialist);
+    if (userChoice == t->key[0])
+    {
+        printf("\n%s\n", t->key);
+    }
 
-    print_styled_input("Enter the time");
-    scanf("%s", *time);
+    searchForUserChoice(t->lchild, userChoice);
+    searchForUserChoice(t->rchild, userChoice);
 
     return;
 }
 
-int minimum_key(int k[], int mst[])
+void takeInputFromUser(char **area_name, char **specialist, char **time, AVL t)
 {
-    int minimum = INT_MAX, min, i;
+    char userchoice;
 
-    for (i = 0; i < vertices; i++)
-        if (mst[i] == 0 && k[i] < minimum)
-            minimum = k[i], min = i;
-    return min;
-}
-int **prim(int **g)
-{
-    int parent[vertices];
-    int k[vertices];
-    int mst[vertices];
-    int i, count, edge, v; 
-    for (i = 0; i < vertices; i++)
+    print_styled_input("Enter the area name");
+    scanf("%s", *area_name);
+    if (search(t, *area_name) == -1)
     {
-        k[i] = INT_MAX;
-        mst[i] = 0;
-    }
-    k[0] = 0;       
-    parent[0] = -1; 
-    for (count = 0; count < vertices - 1; count++)
-    {
-        edge = minimum_key(k, mst);
-        mst[edge] = 1;
-        for (v = 0; v < vertices; v++)
+        printf("\n\nI guess you spelled it wrong!\n\n");
+        searchForUserChoice(t, toupper(*area_name[0]));
+        printf("\n\nWere you looking for any of these?? (y/n)\t");
+        scanf("%c", &userchoice);
+        scanf("%c", &userchoice);
+        if (userchoice == 'y')
         {
-            if (g[edge][v] && mst[v] == 0 && g[edge][v] < k[v])
+            print_styled_input("Enter the area name");
+            scanf("%s", *area_name);
+        }
+        else
+        {
+            printf("\nIt seems like your area is out of reachability\n\n");
+            displayMenu();
+        }
+        //}
+    }
+    print_styled_input("Enter the specialist required");
+    scanf("%s", *specialist);
+    print_styled_input("Enter time slot");
+    scanf("%s", *time);
+    printf("\n\nDisplaying Availabilty of %s at hospital from %s onwards:", *specialist, *time);
+
+    return;
+}
+
+int findMinDistanceNode(int dist[], bool visited[], int numNodes)
+{
+    int minDistance = INT_MAX;
+    int minIndex = -1;
+
+    for (int i = 0; i < numNodes; i++)
+    {
+        if (!visited[i] && dist[i] < minDistance)
+        {
+            minDistance = dist[i];
+            minIndex = i;
+        }
+    }
+
+    return minIndex;
+}
+
+int findMinimumDistance(int **graph, int numNodes, int source, int destination)
+{
+    int dist[MAX_NODES];
+    bool visited[MAX_NODES];
+
+    for (int i = 0; i < numNodes; i++)
+    {
+        dist[i] = INT_MAX;
+        visited[i] = false;
+    }
+
+    dist[source] = 0;
+
+    for (int count = 0; count < numNodes - 1; count++)
+    {
+        int u = findMinDistanceNode(dist, visited, numNodes);
+        visited[u] = true;
+
+        for (int v = 0; v < numNodes; v++)
+        {
+            if (!visited[v] && graph[u][v] && (dist[u] != INT_MAX) && dist[u] + graph[u][v] < dist[v])
             {
-                parent[v] = edge, k[v] = g[edge][v];
+                dist[v] = dist[u] + graph[u][v];
             }
         }
     }
 
-    Sp_tree t = (spnode**)malloc(sizeof(spnode)*vertices);
-
-    for(int i = 0; i<vertices-1;i++) {
-        t[i] = NULL;
-    }
-
-    spnode *nn;
-
-    for (int j = 0; j < vertices; j++)
-    {
-        nn = (spnode *)malloc(sizeof(spnode));
-        if(!nn) return NULL;
-        nn->nodeIndex = j;
-        nn->weight = g[j][parent[j]];
-        nn->next = NULL;
-        if(!t[j]) {
-            t[j] = nn;
-        }
-        else {
-            spnode *p = t[i];
-            while(p->next) {
-                p = p->next;
-            }
-            p->next = nn;
-        }
-    }
-
-    int **spMatrix=(int **)malloc(sizeof(int*) * vertices);
-    for (int i = 0; i < vertices; ++i) {
-                spMatrix[i] = (int *)calloc(vertices,sizeof(int));
-
-        spnode* temp = t[i];
-        while (temp != NULL) {
-            spMatrix[i][parent[i]] = t[i]->weight;
-            temp = temp->next;
-        }
-    }
-    for(int i =0;i<vertices;i++)
-    {
-        for(int j=0;j<vertices;j++)
-        {
-            spMatrix[i][j]=spMatrix[j][i];
-            
-        }
-    }
-
-    return spMatrix;
-
+    return dist[destination];
 }
 
+int timecomparator(char *docTime, char *userTime)
+{
+    char *docT = (char *)malloc(sizeof(char) * 30);
+    char *userT = (char *)malloc(sizeof(char) * 30);
+    int j = 0;
+    while (docTime[j] != '-')
+    {
+        docT[j] = docTime[j]; // t1 = parent
+        j++;
+    }
+    j = 0;
+    while (userTime[j] != '-')
+    {
+        userT[j] = userTime[j]; // t2 = child
+        j++;
+    }
+
+    int d = atoi(docT);
+    int u = atoi(userT);
+
+    if (d >= u) // child is smaller than parent
+    {
+
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 void HealthCareLocator(GraphPaths *gp, Graph *g, Graph **collectionOfNodes)
 {
     init(gp);
-    collectionOfNodes = updateNode(&(*g), &(*gp), &(*collectionOfNodes));
-    int j = 0;
-    for (int i = 0; i < 3; i++)
-    {
-        printf("\n%d", collectionOfNodes[i]->hospitalId);
-        printf("\n%s", collectionOfNodes[i]->hospitalName);
-        printf("\n%s", collectionOfNodes[i]->hospitalAddress);
-        while (collectionOfNodes[i]->record[j])
-        {
-            printf("\n%s", collectionOfNodes[i]->record[j]->specialist);
-            printf("\n%s", collectionOfNodes[i]->record[j]->time);
-            j++;
-        }
-    }
-
+    AVL t;
+    initTree(&t);
+    collectionOfNodes = updateNode(&(*g), &(*gp), &(*collectionOfNodes), &t);
+    int i, j = 0;
     char *area_name = (char *)malloc(sizeof(char) * 50);
     char *specialist = (char *)malloc(sizeof(char) * 50);
     char *time = (char *)malloc(sizeof(char) * 50);
 
-    takeInputFromUser(&area_name, &specialist, &time);
+    takeInputFromUser(&area_name, &specialist, &time, t);
 
-    int ** spMatrix=prim(gp->paths);
-    printf("\nSpanning Matrix:\n");
-    for(int i =0;i<vertices;i++)
+    heap h;
+    initHeap(&h, gp->size);
+    j = 0;
+    int minDistance = 1;
+
+    int startVertex = search(t, area_name);
+    if (startVertex < 0)
     {
-        for(int j=0;j<vertices;j++)
-        {
-            printf("%d\t",spMatrix[i][j]);
-            
-        }
-        printf("\n");
+        printf("\n\nSorry! We Could Not Find You a Hospital!!\n");
+        exit(0);
     }
-    
+    for (i = 0; i < vertices; i++)
+    {
+        j = 0;
+        while (collectionOfNodes[i]->record[j])
+        {
+            if (strcmp(collectionOfNodes[i]->record[j]->specialist, specialist) == 0 && (timecomparator(collectionOfNodes[i]->record[j]->time, time)) == 1)
+            {
+                minDistance = findMinimumDistance(gp->paths, gp->size, startVertex, i);
+
+                insertintoHeap(&h, i, collectionOfNodes[i]->record[j]->time, minDistance);
+            }
+            j++;
+        }
+    }
+
+    char fileChoice;
+    printf("\n\nDo you want the Data in a file? (y/n): ");
+    scanf("%c", &fileChoice);
+    scanf("%c", &fileChoice);
+
+    FILE *fp = fopen("User_Output.txt", "w");
+
+    if (fileChoice == 'n')
+    {
+        printf("\n");
+        printf("\nLooking for specialist: %s\n\n", specialist);
+        printf("======================================================================================================================================\n");
+        printf("\033[30m");
+        printf("\033[46m");
+        printf("| %-4s | %-75s | %-20s | %-8s | %-1s |\n", "ID", "Hospital Name", "Address", "Time", "Distance");
+        printf("\033[0m");
+        printf("======================================================================================================================================");
+        printf("\033[0m");
+        printf("\n");
+
+        int var = 21;
+        char continueChoice;
+
+        while (!isEmpty(h))
+        {
+            for (i = 1; i <= var; i++)
+            {
+                id_time *t = deleteHeap(&h);
+                if (h.Array[i])
+                {
+                    printf("| %-4d | %-75s | %-20s | %-8s | %-2d Km |\n", i, collectionOfNodes[h.Array[i]->id]->hospitalName, collectionOfNodes[h.Array[i]->id]->hospitalAddress, t->time, t->distance);
+                    printf("--------------------------------------------------------------------------------------------------------------------------------------\n");
+                    if (i % 20 == 0)
+                    {
+                        printf("\nShow more (y/n): ");
+                        scanf("%c", &continueChoice);
+                        scanf("%c", &continueChoice);
+
+                        if (continueChoice == 'n')
+                            break;
+                        else if (continueChoice == 'y')
+                        {
+                            printf("--------------------------------------------------------------------------------------------------------------------------------------\n");
+                            var = var + 20;
+                        }
+                    }
+                }
+            }
+            if (continueChoice == 'n')
+                break;
+        }
+        printf("\n\n");
+    }
+    else if (fileChoice == 'y')
+    {
+        int i = 1;
+        while (!isEmpty(h))
+        {
+            id_time *t = deleteHeap(&h);
+            if (h.Array[i])
+            {
+                fprintf(fp, "%d - %s\t%s\t%s\t%d Km\n", i, collectionOfNodes[h.Array[i]->id]->hospitalName, collectionOfNodes[h.Array[i]->id]->hospitalAddress, t->time, t->distance);
+                i++;
+            }
+            fprintf(fp, "\n");
+        }
+        printf("\nData Printed in File!!\n");
+        fclose(fp);
+    }
+    else {
+        printf("\nInvalid Choice\n");
+    }
 }
-
-
