@@ -185,7 +185,7 @@ void displayMenu()
         printCentered();
         printf("\n1. Locate a Hospital near you");
         printf("\n2. Find your Specialist");
-        printf("\n3. Exit");
+        printf("\n3. EXIT, Thank you");
         int choice;
         printf("\n\nEnter your choice : ");
         scanf("%d", &choice);
