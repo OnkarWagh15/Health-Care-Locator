@@ -13,6 +13,7 @@
 void init(GraphPaths *gp)
 {
     FILE *path;
+    int kj;
     path = fopen("path.txt", "r");
     int size1;
     fscanf(path, "%d", &size1);
