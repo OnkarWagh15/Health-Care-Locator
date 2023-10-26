@@ -24,3 +24,4 @@ Respirologist          - Deals with the diagnosis and treatment of respiratory d
 Neurosurgery           - Performs surgical procedures on the brain, spinal cord, and peripheral nerves to treat various neurological conditions.
 Dentist                - Focuses on oral health, including diagnosis, prevention, and treatment of diseases and conditions affecting the teeth, gums, and mouth.
 Pathologist            - Performs Lab Tests and diagnose reach results.
+Sexologist             - Examines human sexual behaviour.
