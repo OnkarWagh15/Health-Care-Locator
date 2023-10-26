@@ -178,6 +178,7 @@ void printCentered()
     printf("\n");
 }
 
+
 void displayMenu()
 {
     while (1)
