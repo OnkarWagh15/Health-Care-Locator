@@ -1,10 +1,4 @@
 1000
-Shivajinagar Hardikar_Hospital Cardiologist 10-11
-Shivajinagar Hardikar_Hospital Dermatologist 11-12
-Shivajinagar Hardikar_Hospital Gastroenterologist 12-14
-Shivajinagar Hardikar_Hospital Gynecologist 13-15
-Shivajinagar Hardikar_Hospital Orthopedic 14-17
-Shivajinagar Hardikar_Hospital Neurologist 15-17
 Shivajinagar Hardikar_Hospital Psychiatrist 16-18
 Shivajinagar Hardikar_Hospital Pediatrician 10-11
 Shivajinagar National_Institute_Of_Ophthalmologist Ophthalmologist 11-12
