@@ -6,4 +6,5 @@
 void main()
 {
     displayMenu();
+    return ;
 }
